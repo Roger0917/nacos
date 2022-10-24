@@ -42,29 +42,29 @@ import javax.annotation.PostConstruct;
  */
 @Service
 public class NacosUserDetailsServiceImpl implements UserDetailsService {
-    
+
     private Map<String, User> userMap = new ConcurrentHashMap<>();
-    
+
     @Autowired
     private UserPersistService userPersistService;
-    
+
     @Autowired
     private AuthConfigs authConfigs;
-    
+
     @PostConstruct
     private void init() {
         reload();
     }
-    
+
     @Scheduled(initialDelay = 15000, fixedDelay = 15000)
     private void reload() {
         try {
-            Page<User> users = getUsersFromDatabase(1, Integer.MAX_VALUE);
+            Page<User> users = getUsersFromDatabase(1, 1000000);
             if (users == null) {
                 return;
             }
-            
-            Map<String, User> map = new ConcurrentHashMap<>(16);
+
+             Map<String, User> map = new ConcurrentHashMap<>(16);
             for (User user : users.getPageItems()) {
                 map.put(user.getUsername(), user);
             }
@@ -73,29 +73,29 @@ public class NacosUserDetailsServiceImpl implements UserDetailsService {
             Loggers.AUTH.warn("[LOAD-USERS] load failed", e);
         }
     }
-    
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        
+
         User user = userMap.get(username);
         if (!authConfigs.isCachingEnabled()) {
             user = userPersistService.findUserByUsername(username);
         }
-        
+
         if (user == null) {
             throw new UsernameNotFoundException(username);
         }
         return new NacosUserDetails(user);
     }
-    
+
     public void updateUserPassword(String username, String password) {
         userPersistService.updateUserPassword(username, password);
     }
-    
+
     public Page<User> getUsersFromDatabase(int pageNo, int pageSize) {
         return userPersistService.getUsers(pageNo, pageSize);
     }
-    
+
     public User getUser(String username) {
         User user = userMap.get(username);
         if (!authConfigs.isCachingEnabled()) {
@@ -103,7 +103,7 @@ public class NacosUserDetailsServiceImpl implements UserDetailsService {
         }
         return user;
     }
-    
+
     public User getUserFromDatabase(String username) {
         return userPersistService.findUserByUsername(username);
     }
@@ -115,7 +115,7 @@ public class NacosUserDetailsServiceImpl implements UserDetailsService {
     public void createUser(String username, String password) {
         userPersistService.createUser(username, password);
     }
-    
+
     public void deleteUser(String username) {
         userPersistService.deleteUser(username);
     }
