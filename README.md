@@ -1,6 +1,6 @@
 源码打包:
 ```shell
-mvn -Prelease-nacos -Dpmd.skip=true -Dcheckstyle.skip=true -Dmaven.test.skip=true clean install -U
+mvn -Prelease-nacos -Dpmd.skip=true -Dcheckstyle.skip=true -Drat.skip=true -Dmaven.test.skip=true clean install -U
 ```
 
 
