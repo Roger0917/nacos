@@ -55,7 +55,7 @@ rem if nacos startup mode is standalone
 if %MODE% == "standalone" (
     echo "nacos is starting with standalone"
 	  set "NACOS_OPTS=-Dnacos.standalone=true"
-    set "NACOS_JVM_OPTS=-Xms512m -Xmx512m -Xmn256m -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=9000"
+    set "NACOS_JVM_OPTS=-Xms512m -Xmx512m -Xmn256m"
 )
 
 rem if nacos startup mode is cluster
